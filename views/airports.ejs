@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyFlights</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img class="siteIcon" src="paper-plane.png" />
+      <h1 class="siteName">MyFlights</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/airports">Airports</a></li>
+        <li><a href="/add-airport">Add Airport</a></li>
+        <li><a href="/flights">Flights</a></li>
+        <li><a href="/add-flight">Add Flight</a></li>
+      </ul>
+    </nav>
+    <main>
+      <table id="myTable">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Annual passengers</th>
+            <th>Country</th>
+            <th>
+              <input
+                type="text"
+                id="myInput"
+                onkeyup="search()"
+                placeholder="Search.."
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i = 0; i < airports.length; i++) { %>
+          <tr>
+            <td><%= airports[i].code %></td>
+            <td><%= airports[i].airport_name %></td>
+            <td><%= airports[i].annual_passengers %></td>
+            <td><%= airports[i].country_name %></td>
+            <td>
+              <button class="deleteButton" onclick="deleteAirport('<%= airports[i].code %>')">
+                <span>Delete</span>
+              </button>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </main>
+
+    <script>
+      function search() {
+        const input = document.getElementById("myInput");
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById("myTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 0; i < tr.length; i++) {
+          const td = tr[i].getElementsByTagName("td")[0];
+
+          if (td) {
+            const txtValue = td.textContent || td.innerText;
+
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+      function deleteAirport(id) {
+        fetch("/api/airports/" + id, {
+          method: "DELETE",
+        })
+          .then(() => location.replace(location.origin + "/airports"))
+          .catch(() => alert("Could not delete airport."));
+      }
+    </script>
+  </body>
+</html>

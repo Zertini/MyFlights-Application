@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyFlights</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img class="siteIcon" src="paper-plane.png" />
+      <h1 class="siteName">MyFlights</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/airports">Airports</a></li>
+        <li><a href="/add-airport">Add Airport</a></li>
+        <li><a href="/flights">Flights</a></li>
+        <li><a href="/add-flight">Add Flight</a></li>
+      </ul>
+    </nav>
+    <main>
+      <table>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Annual passengers</th>
+          <th>Country</th>
+        </tr>
+      <tr>
+      <form onsubmit="create(event)">
+        <th>
+        <input id="code" />
+      </th>
+      <th>
+        <input id="name" />
+      </th>
+      <th>
+        <input id="passengers" />
+      </th>
+      <th>
+        <select id="country">
+          <% for(var i = 0; i < countries.length; i++) { %>
+          <option value="<%= countries[i].id %>">
+            <%= countries[i].name %>
+          </option>
+          <% } %>
+        </select>
+      </th>
+      </tr>
+      </table>
+        <input id="createButton" type="submit" value="Create" />
+      </form>
+    </main>
+
+    <script>
+      function create(event) {
+        event.preventDefault();
+
+        const payload = {
+          code: document.querySelector("#code").value,
+          name: document.querySelector("#name").value,
+          annualPassengers: document.querySelector("#passengers").value,
+          countryId: document.querySelector("#country").value,
+        };
+
+        fetch("/api/airports", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+          .then(() => location.replace(location.origin + "/airports"))
+          .catch(() => alert("Could not add airport."));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyFlights</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img class="siteIcon" src="paper-plane.png" />
+      <h1 class="siteName">MyFlights</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/airports">Airports</a></li>
+        <li><a href="/add-airport">Add Airport</a></li>
+        <li><a href="/flights">Flights</a></li>
+        <li><a href="/add-flight">Add Flight</a></li>
+      </ul>
+    </nav>
+    <main>
+      <table id="myTable">
+        <thead>
+          <tr>
+            <th>Departure airport</th>
+            <th>Destination airport</th>
+            <th>Departure time</th>
+            <th>Duration</th>
+            <th>
+              <input
+                type="text"
+                id="myInput"
+                onkeyup="search()"
+                placeholder="Search.."
+              />
+            </th>
+          </tr>
+        </thead>
+        <% for(var i = 0; i < flights.length; i++) { %>
+        <tr>
+          <td><%= flights[i].departure_airport_code %></td>
+          <td><%= flights[i].destination_airport_code %></td>
+          <td><%= flights[i].departure_time %></td>
+          <td><%= flights[i].duration %></td>
+          <td>
+            <button class="editButton" onclick="editFlight(<%= flights[i].id %>)">
+              <span>Edit</span>
+            </button>
+            <button class="deleteButton" onclick="deleteFlight(<%= flights[i].id %>)">
+              <span>Delete</span>
+            </button>
+          </td>
+        </tr>
+        <% } %>
+      </table>
+    </main>
+
+    <script>
+      function search() {
+        const input = document.getElementById("myInput");
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById("myTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 0; i < tr.length; i++) {
+          const td = tr[i].getElementsByTagName("td")[0];
+
+          if (td) {
+            const txtValue = td.textContent || td.innerText;
+
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+      function editFlight(id) {
+        location.replace(location.origin + "/edit-flight/" + id);
+      }
+
+      function deleteFlight(id) {
+        fetch("/api/flights/" + id, {
+          method: "DELETE",
+        })
+          .then(() => location.replace(location.origin + "/flights"))
+          .catch(() => alert("Could not delete flight."));
+      }
+    </script>
+  </body>
+</html>

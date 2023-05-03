@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>MyFlights</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+  <header>
+    <img class="siteIcon" src="paper-plane.png" />
+    <h1 class="siteName">MyFlights</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/airports">Airports</a></li>
+      <li><a href="/add-airport">Add Airport</a></li>
+      <li><a href="/flights">Flights</a></li>
+      <li><a href="/add-flight">Add Flight</a></li>
+    </ul>
+  </nav>
+  <main>
+    <table>
+      <tr>
+        <th>Departure Airport</th>
+        <th>Destination Airport</th>
+        <th>Departure Time</th>
+        <th>Duration</th>
+      </tr>
+      <tr>
+        <form onsubmit="create(event)">
+          <th>
+            <select id="departureAirportCode">
+              <% for(var i = 0; i < airports.length; i++) { %>
+              <option value="<%= airports[i].code %>">
+                <%= airports[i].airport_name %>
+              </option>
+              <% } %>
+            </select>
+          </th>
+          <th>
+            <select id="destinationAirportCode">
+              <% for(var i = 0; i < airports.length; i++) { %>
+              <option value="<%= airports[i].code %>">
+                <%= airports[i].airport_name %>
+              </option>
+              <% } %>
+            </select>
+          </th>
+          <th>
+            <input id="departureTime" />
+          </th>
+          <th>
+            <input id="duration" />
+          </th>
+      </tr>
+    </table>
+    <input id="createButton" type="submit" value="Create" />
+    </form>
+  </main>
+
+  <script>
+    function create(event) {
+      event.preventDefault();
+
+      const payload = {
+        departureAirportCode: document.querySelector("#departureAirportCode")
+          .value,
+        destinationAirportCode: document.querySelector(
+          "#destinationAirportCode"
+        ).value,
+        departureTime: document.querySelector("#departureTime").value,
+        duration: document.querySelector("#duration").value,
+      };
+
+      fetch("/api/flights", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(payload),
+        })
+        .then(() => location.replace(location.origin + "/flights"))
+        .catch(() => alert("Could not add airport."));
+    }
+  </script>
+</body>
+
+</html>
